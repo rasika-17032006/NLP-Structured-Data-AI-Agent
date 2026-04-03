@@ -1,0 +1,193 @@
+{
+  "name": "NLP to SQL Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        64,
+        176
+      ],
+      "id": "90bd69b7-fccb-4ee4-bd81-0ab08a123b58",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "WzVNnET7WQxszGOO",
+          "name": "Google Gemini(PaLM) Api account 3"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "=define",
+        "text": "={{ $json.chatInput }}",
+        "options": {
+          "systemMessage": "\"You are a student record assistant. Whenever the user asks about marks, names, or grades, use the get_student_data tool.\n\nImportant: The tool returns a JSON object where the data is inside a field called student_csv. This field contains a list of students with headers: Name, Subject, Marks, Grade.\n\nUse this information to answer the user's specific question in one clear sentence.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        176,
+        0
+      ],
+      "id": "24204cba-4ed9-4f68-b76c-6e22f6b4487a",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "assessment-session-01"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        240,
+        224
+      ],
+      "id": "ce145dd0-5364-47df-b094-8229d7390288",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "content": "Name: Rasika K S\n\nReg No: 23BCE2069\n",
+        "height": 80,
+        "width": 176,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -800,
+        -96
+      ],
+      "id": "dce6b7b4-39d0-41bc-80f7-54f299786c1f",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "public": true,
+        "initialMessages": "Hi there! 👋\nHow can I assist you today?",
+        "options": {
+          "responseMode": "responseNodes"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.chatTrigger",
+      "typeVersion": 1.4,
+      "position": [
+        -112,
+        0
+      ],
+      "id": "12a24f17-526e-418b-bca9-271d9f7ab9a7",
+      "name": "When chat message received",
+      "webhookId": "255505f7-dbd3-4e36-9598-80cd2be81501",
+      "alwaysOutputData": false,
+      "executeOnce": false
+    },
+    {
+      "parameters": {
+        "message": "={{ $node[\"AI Agent\"].json[\"output\"] }}",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chat",
+      "typeVersion": 1,
+      "position": [
+        576,
+        0
+      ],
+      "id": "4ab96e9b-638c-4c2b-9f7e-c99443cb7872",
+      "name": "Respond to Chat"
+    },
+    {
+      "parameters": {
+        "description": "Use this tool to fetch the student records including Name, Subject, Marks, and Grades from the spreadsheet.",
+        "source": "parameter",
+        "workflowJson": "={\n  \"nodes\": [\n    {\n      \"parameters\": {\n        \"workflowInputs\": {\n          \"values\": [\n            {\n              \"name\": \"query\"\n            }\n          ]\n        }\n      },\n      \"id\": \"c055762a-8fe7-4141-a639-df2372f30060\",\n      \"typeVersion\": 1.1,\n      \"name\": \"When Executed by Another Workflow\",\n      \"type\": \"n8n-nodes-base.executeWorkflowTrigger\",\n      \"position\": [\n        272,\n        352\n      ]\n    },\n    {\n      \"parameters\": {\n        \"url\": \"https://docs.google.com/spreadsheets/d/e/2PACX-1vRa_5FDlj-t81Ckw3_O7e6S1mpjuWKn9ugNi6MGyISLQ-080bfmOk7y77NerAqfgILv1Vh2OjAN25mM/pub?gid=0&single=true&output=csv\",\n        \"options\": {\n          \"response\": {\n            \"response\": {\n              \"responseFormat\": \"text\",\n              \"outputPropertyName\": \"student_csv\"\n            }\n          }\n        }\n      },\n      \"type\": \"n8n-nodes-base.httpRequest\",\n      \"typeVersion\": 4.3,\n      \"position\": [\n        480,\n        352\n      ],\n      \"id\": \"d280ac0b-00e0-43a3-9a90-0bb0f6b939fc\",\n      \"name\": \"HTTP Request\"\n    }\n  ],\n  \"connections\": {\n    \"When Executed by Another Workflow\": {\n      \"main\": [\n        [\n          {\n            \"node\": \"HTTP Request\",\n            \"type\": \"main\",\n            \"index\": 0\n          }\n        ]\n      ]\n    }\n  },\n  \"pinData\": {},\n  \"meta\": {\n    \"instanceId\": \"468c9787a361038a45d2674676a7cc08876af38123f33b405a5043717f16d2c8\"\n  }\n}\n\n\n\n\n\n\n\n\n"
+      },
+      "type": "@n8n/n8n-nodes-langchain.toolWorkflow",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        208
+      ],
+      "id": "f54dc380-cf19-42f5-a7fa-75b4691d0225",
+      "name": "get_student_data",
+      "notesInFlow": false
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Respond to Chat",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "When chat message received": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "get_student_data": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "92c96281-1516-44bf-bc9b-8f8f4fef3261",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "468c9787a361038a45d2674676a7cc08876af38123f33b405a5043717f16d2c8"
+  },
+  "id": "ISX4jsek49P1AvFUiwHYv",
+  "tags": []
+}

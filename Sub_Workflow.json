@@ -1,0 +1,70 @@
+{
+  "name": "My Sub-Workflow 1",
+  "nodes": [
+    {
+      "parameters": {
+        "workflowInputs": {
+          "values": [
+            {
+              "name": "query"
+            }
+          ]
+        }
+      },
+      "id": "c055762a-8fe7-4141-a639-df2372f30060",
+      "typeVersion": 1.1,
+      "name": "When Executed by Another Workflow",
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "position": [
+        272,
+        352
+      ]
+    },
+    {
+      "parameters": {
+        "url": "https://docs.google.com/spreadsheets/d/e/2PACX-1vRa_5FDlj-t81Ckw3_O7e6S1mpjuWKn9ugNi6MGyISLQ-080bfmOk7y77NerAqfgILv1Vh2OjAN25mM/pub?gid=0&single=true&output=csv",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text",
+              "outputPropertyName": "student_csv"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.3,
+      "position": [
+        480,
+        352
+      ],
+      "id": "d280ac0b-00e0-43a3-9a90-0bb0f6b939fc",
+      "name": "HTTP Request"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": false
+  },
+  "versionId": "9b1a19b6-a345-4c1c-a9c4-39bc93d039b8",
+  "meta": {
+    "instanceId": "468c9787a361038a45d2674676a7cc08876af38123f33b405a5043717f16d2c8"
+  },
+  "id": "MZwp0M3anrp9zHXT",
+  "tags": []
+}
